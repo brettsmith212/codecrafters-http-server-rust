@@ -19,7 +19,7 @@ fn main() {
                   if path == "/" {
                     _stream.write(b"HTTP/1.1 200 OK\r\n\r\n").unwrap();
                   } else if path.starts_with("/echo/") {
-                    send_plain_text(&_stream, path);
+                    send_plain_text(&_stream, &path[6..]);
                   } else {
                     _stream.write(b"HTTP/1.1 404 NOT FOUND\r\n\r\n").unwrap();
                   }
