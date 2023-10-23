@@ -1,4 +1,4 @@
-use std::net::TcpListener;
+use std::net::{TcpListener, TcpStream};
 use std::io::{BufRead, BufReader, Write};
 
 fn main() {
@@ -18,6 +18,8 @@ fn main() {
                   let path = datas.next().unwrap();
                   if path == "/" {
                     _stream.write(b"HTTP/1.1 200 OK\r\n\r\n").unwrap();
+                  } else if path.starts_with("/echo/") {
+                    send_plain_text(&_stream, path);
                   } else {
                     _stream.write(b"HTTP/1.1 404 NOT FOUND\r\n\r\n").unwrap();
                   }
@@ -28,4 +30,11 @@ fn main() {
             }
         }
     }
+}
+
+fn send_plain_text(mut stream: &TcpStream, text: &str) {
+  let mut data = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n".to_string();
+  data.push_str(&format!("Content-Length: {}\r\n\r\n", text.len()));
+  data.push_str(text);
+  stream.write(data.as_bytes()).unwrap();
 }
